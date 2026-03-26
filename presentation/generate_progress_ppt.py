@@ -223,7 +223,14 @@ add_paragraph_box(
 # Slide 3
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_background(slide)
-add_title(slide, "2. Live Demo: Dashboard Output", "The screenshot below comes from the current run of subscriber_display.py.")
+add_title(slide, "2. Current System Architecture", "This architecture diagram matches the modules that are active in the present demo.")
+add_image(slide, ASSETS / "architecture_diagram.png", 0.68, 1.55, width=12.0, height=5.75)
+
+
+# Slide 4
+slide = prs.slides.add_slide(prs.slide_layouts[6])
+set_background(slide)
+add_title(slide, "3. Live Demo: Dashboard Output", "The screenshot below comes from the current run of subscriber_display.py.")
 add_image(slide, ASSETS / "demo_dashboard.png", 0.78, 1.65, width=7.2, height=4.5)
 add_paragraph_box(
     slide,
@@ -249,10 +256,10 @@ add_paragraph_box(
 )
 
 
-# Slide 4
+# Slide 5
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_background(slide)
-add_title(slide, "3. Live Demo: Message Publishing and Service Interaction", "The current prototype already has active publishers and reactive service logic.")
+add_title(slide, "4. Live Demo: Message Publishing and Service Interaction", "The current prototype already has active publishers and reactive service logic.")
 add_image(slide, ASSETS / "demo_publishers.png", 0.82, 1.72, width=6.05, height=3.45)
 add_image(slide, ASSETS / "demo_services.png", 6.95, 1.72, width=5.56, height=3.45)
 add_paragraph_box(
@@ -268,10 +275,10 @@ add_paragraph_box(
 )
 
 
-# Slide 5
+# Slide 6
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_background(slide)
-add_title(slide, "4. GitHub Progress and Commit Record", "The repository history now reflects the recent implementation and presentation work.")
+add_title(slide, "5. GitHub Progress and Commit Record", "The repository history now reflects the recent implementation and presentation work.")
 add_image(slide, ASSETS / "github_commits_framed.png", 0.72, 1.55, width=8.3, height=5.25)
 add_bullet_card(
     slide,
@@ -290,10 +297,10 @@ add_bullet_card(
 )
 
 
-# Slide 6
+# Slide 7
 slide = prs.slides.add_slide(prs.slide_layouts[6])
 set_background(slide)
-add_title(slide, "5. Current Status and Next Step", "The prototype is already ready for a short classroom demonstration.")
+add_title(slide, "6. Current Status and Next Step", "The prototype is already ready for a short classroom demonstration.")
 add_bullet_card(
     slide,
     0.85,

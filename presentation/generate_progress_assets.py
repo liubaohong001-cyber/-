@@ -110,6 +110,104 @@ def create_publishers_image():
     img.save(ASSET_DIR / "demo_publishers.png")
 
 
+def draw_arrow(draw, start, end, color, width=7):
+    x1, y1 = start
+    x2, y2 = end
+    draw.line((x1, y1, x2, y2), fill=color, width=width)
+    if abs(x2 - x1) >= abs(y2 - y1):
+        if x2 >= x1:
+            head = [(x2, y2), (x2 - 18, y2 - 10), (x2 - 18, y2 + 10)]
+        else:
+            head = [(x2, y2), (x2 + 18, y2 - 10), (x2 + 18, y2 + 10)]
+    else:
+        if y2 >= y1:
+            head = [(x2, y2), (x2 - 10, y2 - 18), (x2 + 10, y2 - 18)]
+        else:
+            head = [(x2, y2), (x2 - 10, y2 + 18), (x2 + 10, y2 + 18)]
+    draw.polygon(head, fill=color)
+
+
+def draw_centered_text(draw, box, text, font, fill):
+    x1, y1, x2, y2 = box
+    lines = text.split("\n")
+    line_heights = []
+    widths = []
+    for line in lines:
+        bbox = draw.textbbox((0, 0), line, font=font)
+        widths.append(bbox[2] - bbox[0])
+        line_heights.append(bbox[3] - bbox[1])
+    total_h = sum(line_heights) + (len(lines) - 1) * 6
+    cy = y1 + (y2 - y1 - total_h) / 2
+    for line, w, h in zip(lines, widths, line_heights):
+        cx = x1 + (x2 - x1 - w) / 2
+        draw.text((cx, cy), line, font=font, fill=fill)
+        cy += h + 6
+
+
+def create_architecture_image():
+    img = Image.new("RGB", (1600, 900), (244, 247, 251))
+    draw = ImageDraw.Draw(img)
+    draw.text((80, 60), "Current Smart Parking Architecture", font=TITLE_FONT, fill=(26, 47, 79))
+    draw.text(
+        (80, 110),
+        "The diagram below reflects the modules that are already connected in the current MQTT demo.",
+        font=SUB_FONT,
+        fill=(82, 94, 111),
+    )
+
+    sensor_box = (90, 220, 430, 340)
+    vehicle_box = (90, 470, 430, 590)
+    broker_box = (610, 335, 990, 475)
+    display_box = (1170, 130, 1510, 250)
+    stats_box = (1170, 335, 1510, 455)
+    gate_box = (1170, 555, 1510, 675)
+
+    for box, color in [
+        (sensor_box, (42, 143, 136)),
+        (vehicle_box, (187, 92, 44)),
+        (broker_box, (31, 91, 168)),
+        (display_box, (42, 143, 136)),
+        (stats_box, (214, 131, 58)),
+        (gate_box, (42, 127, 144)),
+    ]:
+        draw.rounded_rectangle(box, radius=24, fill=color, outline=(255, 255, 255), width=3)
+
+    draw_centered_text(draw, sensor_box, "Parking Sensors\npublisher_sensor.py", BODY_FONT, (255, 255, 255))
+    draw_centered_text(draw, vehicle_box, "Vehicle Request Generator\npublisher_vehicle_request.py", BODY_FONT, (255, 255, 255))
+    draw_centered_text(draw, broker_box, "MQTT Broker\nbroker.hivemq.com", BODY_FONT, (255, 255, 255))
+    draw_centered_text(draw, display_box, "Display Service\nsubscriber_display.py", BODY_FONT, (255, 255, 255))
+    draw_centered_text(draw, stats_box, "Statistics Service\nsubscriber_stats.py", BODY_FONT, (255, 255, 255))
+    draw_centered_text(draw, gate_box, "Gate Controller\nsubscriber_gateway.py", BODY_FONT, (255, 255, 255))
+
+    draw_arrow(draw, (430, 280), (610, 280), (31, 91, 168))
+    draw_arrow(draw, (610, 280), (610, 335), (31, 91, 168))
+    draw_arrow(draw, (430, 530), (610, 530), (187, 92, 44))
+    draw_arrow(draw, (610, 530), (610, 475), (187, 92, 44))
+    draw_arrow(draw, (990, 390), (1170, 190), (42, 143, 136))
+    draw_arrow(draw, (990, 405), (1170, 395), (214, 131, 58))
+    draw_arrow(draw, (990, 430), (1170, 615), (42, 127, 144))
+    draw_arrow(draw, (1340, 455), (1340, 515), (214, 131, 58))
+    draw_arrow(draw, (1340, 515), (990, 515), (214, 131, 58))
+    draw_arrow(draw, (990, 515), (990, 455), (214, 131, 58))
+
+    label_color = (70, 82, 98)
+    draw.text((465, 245), "parking/lot/+/status", font=SMALL_FONT, fill=label_color)
+    draw.text((453, 553), "parking/gate/request", font=SMALL_FONT, fill=label_color)
+    draw.text((1010, 245), "parking/lot/+/status", font=SMALL_FONT, fill=label_color)
+    draw.text((1010, 365), "parking/lot/+/status", font=SMALL_FONT, fill=label_color)
+    draw.text((1010, 545), "parking/gate/request", font=SMALL_FONT, fill=label_color)
+    draw.text((1040, 500), "parking/stats/summary", font=SMALL_FONT, fill=label_color)
+
+    footer = (
+        "The parking sensors and vehicle request generator publish live MQTT messages. The display and statistics services subscribe to slot updates, "
+        "while the gate controller uses the latest parking summary to decide whether a new car can enter."
+    )
+    draw.rounded_rectangle((80, 750, 1520, 840), radius=24, fill=(228, 236, 247), outline=(228, 236, 247))
+    draw.text((110, 780), footer, font=SMALL_FONT, fill=(26, 47, 79))
+
+    img.save(ASSET_DIR / "architecture_diagram.png")
+
+
 def process_github_shot():
     raw_path = ASSET_DIR / "github_commits.png"
     if not raw_path.exists():
@@ -139,5 +237,6 @@ if __name__ == "__main__":
     create_dashboard_image()
     create_services_image()
     create_publishers_image()
+    create_architecture_image()
     process_github_shot()
     print(ASSET_DIR)
